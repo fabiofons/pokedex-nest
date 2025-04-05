@@ -2,11 +2,12 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreatePokemonDto } from './dto/create-pokemon.dto';
 import { UpdatePokemonDto } from './dto/update-pokemon.dto';
-import { Model } from 'mongoose';
+import { isValidObjectId, Model } from 'mongoose';
 import { Pokemon } from './entities/pokemon.entity';
 
 interface DBError {
@@ -44,14 +45,38 @@ export class PokemonService {
     return `This action returns all pokemon`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} pokemon`;
+  async findOne(term: string) {
+    console.log(term);
+    let pokemon;
+    if (!isNaN(+term)) {
+      pokemon = await this.pokemonModel.findOne({ number: term });
+    }
+
+    if (!pokemon && isValidObjectId(term)) {
+      pokemon = await this.pokemonModel.findById(term);
+    }
+
+    if (!pokemon) {
+      pokemon = await this.pokemonModel.findOne({
+        name: term.toLocaleLowerCase().trim(),
+      });
+    }
+
+    if (!pokemon) throw new NotFoundException(`Pokemon "${term}" not found`);
+
+    return pokemon as Pokemon;
   }
 
-  update(id: number, updatePokemonDto: UpdatePokemonDto) {
-    return `This action updates a #${id} pokemon`;
-  }
+  async update(term: string, updatePokemonDto: UpdatePokemonDto) {
+    const pokemon = await this.findOne(term);
 
+    if (updatePokemonDto.name)
+      updatePokemonDto.name = updatePokemonDto.name.toLocaleLowerCase().trim();
+
+    await pokemon.updateOne(updatePokemonDto);
+
+    return { ...pokemon.toJSON(), ...updatePokemonDto };
+  }
   remove(id: number) {
     return `This action removes a #${id} pokemon`;
   }
