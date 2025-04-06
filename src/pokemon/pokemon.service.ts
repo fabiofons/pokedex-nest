@@ -62,6 +62,9 @@ export class PokemonService {
 
   async update(term: string, updatePokemonDto: UpdatePokemonDto) {
     const pokemon = await this.findOne(term);
+    if (!updatePokemonDto) {
+      throw new BadRequestException('Body can not be empty');
+    }
 
     if (updatePokemonDto.name)
       updatePokemonDto.name = updatePokemonDto.name.toLocaleLowerCase().trim();
@@ -73,8 +76,13 @@ export class PokemonService {
       this.handleException(error as DBError);
     }
   }
-  remove(id: number) {
-    return `This action removes a #${id} pokemon`;
+
+  async remove(id: string) {
+    // const pokemon = await this.pokemonModel.findByIdAndDelete(id); //No valida si existe en base de datos
+    const { deletedCount } = await this.pokemonModel.deleteOne({ _id: id });
+    if (deletedCount === 0)
+      throw new BadRequestException(`Pokemon with id "${id}" not found`);
+    return;
   }
 
   private handleException(error: DBError) {
