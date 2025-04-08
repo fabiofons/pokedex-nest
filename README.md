@@ -15,6 +15,8 @@
 4. Setup the DB
 ```docker-compose up -d```
 
+5. Populate the DB with pokemons
+```http://localhost:3000/api/v2/seed```
 
 ## Stack
 * MongoDB
