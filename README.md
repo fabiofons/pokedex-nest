@@ -15,7 +15,12 @@
 4. Setup the DB
 ```docker-compose up -d```
 
-5. Populate the DB with pokemons
+5. Clone the file ```.env.template``` and remane it to ```.env``` and give then the correct values
+
+6. Run the app 
+```pnpm run start:dev```
+
+6. Populate the DB with pokemons
 ```http://localhost:3000/api/v2/seed```
 
 ## Stack
