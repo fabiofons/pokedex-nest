@@ -21,6 +21,9 @@ import { join } from 'path';
     }),
     MongooseModule.forRoot(
       process.env.MONGODB || 'mongodb://localhost:27017/nest-pokemon',
+      {
+        dbName: 'pokemonsdb',
+      },
     ),
     PokemonModule,
     CommonModule,
