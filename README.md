@@ -26,3 +26,11 @@
 ## Stack
 * MongoDB
 * NestJS
+
+## Prodution build
+
+1. Create file ```env.prod```
+
+2. Set the prod env variables
+
+3. Create the new image ```docker-compose -f docker-compose.prod.yaml --env-file .env.prod up --build```

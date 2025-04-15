@@ -1,0 +1,6 @@
+
+dist/
+node_modiles/
+
+.gitignore
+.git/
